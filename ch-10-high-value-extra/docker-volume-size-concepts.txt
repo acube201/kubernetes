@@ -1,0 +1,59 @@
+Understanding tmpfs
+====================
+
+By default, a Docker tmpfs volume has a maximum size limit equal to 50% of the host system's total RAM.
+
+
+Example #1 
+
+docker run -d \
+  --name web_cache \
+  --mount type=tmpfs,destination=/app/cache,tmpfs-size=1073741824 \
+  nginx:latest
+
+Example #2
+
+docker run -d \
+  --name web_cache \
+  --tmpfs /app/cache:size=1G \
+  nginx:latest
+
+Example #3 - In Docker Compose
+
+version: "3.8"
+services:
+  webapp:
+    image: nginx:latest
+    tmpfs:
+      - /app/cache:size=1G
+
+
+Example #4 - Named volume style
+
+services:
+  webapp:
+    image: nginx:latest
+    volumes:
+      - cache_vol:/app/cache
+
+volumes:
+  cache_vol:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=1G"
+
+REMEMBER:
+
+If container has a hard memory limit enforced (e.g., --memory=700m), the tmpfs usage counts directly against that container's total memory pool. If your application consumes 500 MB of RAM and your tmpfs mount fills up with 250 MB of data, the total (750 MB) will exceed the 700 MB limit, and the Docker daemon will instantly terminate your container.
+
+
+Docker Volume Size Limit - Persistent Volume
+=============================================
+
+
+docker volume create hello \
+    --opt type=ext4 \
+    --opt device=/dev/sda1 \
+    --opt o=size=100m

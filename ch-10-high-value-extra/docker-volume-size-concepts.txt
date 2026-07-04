@@ -46,7 +46,10 @@ volumes:
 
 REMEMBER:
 
-If container has a hard memory limit enforced (e.g., --memory=700m), the tmpfs usage counts directly against that container's total memory pool. If your application consumes 500 MB of RAM and your tmpfs mount fills up with 250 MB of data, the total (750 MB) will exceed the 700 MB limit, and the Docker daemon will instantly terminate your container.
+If container has a hard memory limit enforced (e.g., --memory=700m), 
+the tmpfs usage counts directly against that container's total memory pool. 
+If your application consumes 500 MB of RAM and your tmpfs mount fills up with 250 MB of data, 
+the total (750 MB) will exceed the 700 MB limit, and the Docker daemon will instantly terminate your container.
 
 
 Docker Volume Size Limit - Persistent Volume

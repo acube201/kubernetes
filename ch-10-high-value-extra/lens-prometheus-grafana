@@ -54,6 +54,20 @@ kubectl port-forward -n monitoring service/prometheus-grafana 3000:80
 
 In Browser - http://localhost:3000
 
+### If Cluster is behind Bastion Host ####
+From workstation 
+
+ssh into bastion host
+kubectl port-forward service/grafana 3000:3000 --namespace=monitoring
+
+another terminal on workstation
+ssh -L 3000:localhost:3000 user@bastion-server-ip 
+
+on workstation
+http://localhost:3000
+
+#####
+
 
 #########
 Reference - https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack

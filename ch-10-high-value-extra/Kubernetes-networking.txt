@@ -1,0 +1,40 @@
+Three things you need to remember in Kubernetes networking
+
+1. Every pod get its own IP
+2. Pods on the same node can talk to each other using those IP, without NAT
+3. Pods on different nodes can talk to each other using those IP, without NAT
+
+Hows that possible??
+
+Kubernetes says: no NAT between pods. A pod on node A with IP X can send a packet directly to a pod on node B with Y.
+
+Direct, flat, routable across the cluster
+
+That means the underlying network infrastructure has to do more work to make it true. That work is what CNI plugins do.
+
+====Pod's on same node
+
+When a second pod on the same node sends a packet to the first:
+
+Pod A eth0 → vethA → bridge → vethB → Pod B eth0
+
+====Pods' on different nodes
+
+Calico uses the Bird program behind the scenes to handle BGP (Border Gateway Protocol) for routing between pods across different nodes. Bird helps in advertising routes to other nodes, which is essential for network communication between pods.
+
+Pod A → veth → bridge → Node 1 routing table
+  → next hop: Node 2 IP (for 10.244.2.0/24)
+  → physical network routes node-to-node
+  → Node 2 routing table → bridge → veth → Pod B
+
+No encapsulation overhead. Better performance. Requires the underlying network to support BGP peering or direct route injection.
+
+
+##calico commands
+
+kubectl -n kube-system exec -it calico-node-69q2z -- bash
+
+calico-node --show-status
+calicoctl node status
+
+
